@@ -8,11 +8,13 @@ jobs:
     strategy:
       matrix:
         cc: [ gcc, clang ]
-      name: '${{ matrix.cc }}'
+
     runs-on: ubuntu-latest
+
     env:
       CC: '${{ matrix.cc }}'
       configure_flags: --enable-multilink --enable-systemd --enable-cbcp
+
     container:
       image: fedora:rawhide
 
