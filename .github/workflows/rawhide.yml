@@ -1,0 +1,35 @@
+
+name: Fedora Rawhide (latest compilers)
+on: [push, pull_request]
+
+jobs:
+  fedora:
+
+    strategy:
+      matrix:
+        cc: [ gcc, clang ]
+      name: '${{ matrix.cc }}'
+      runs-on: ubuntu-latest
+      env:
+        CC: '${{ matrix.cc }}'
+        configure_flags: --enable-multilink --enable-systemd --enable-cbcp
+      container:
+        image: fedora:rawhide
+      steps:
+      - name: Install tools
+        run: |
+          dnf -y groupinstall 'Development Tools'
+          dnf -y install openssl-devel
+      - uses: actions/checkout@v3
+
+      - name: configure
+        run: ./autogen.sh ${{ env.configure_flags }}
+
+      - name: build
+        run: make V=1 CFLAGS="-O2 -g -Wno-unused-result"
+
+      - name: run auto tests
+        run: VERBOSE=true make check
+
+      - name: distcheck
+        run: make distcheck DISTCHECK_CONFIGURE_FLAGS="${{ env.configure_flags }}"
