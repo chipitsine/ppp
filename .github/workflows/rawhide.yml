@@ -23,7 +23,7 @@ jobs:
     - name: Install tools
       run: |
         dnf -y groupinstall 'Development Tools'
-        dnf -y install openssl-devel
+        dnf -y install autoconf openssl-devel
     - uses: actions/checkout@v3
 
     - name: configure
