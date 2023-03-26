@@ -23,7 +23,7 @@ jobs:
     - name: Install tools
       run: |
         dnf -y groupinstall 'Development Tools'
-        dnf -y install autoconf automake libtool clang systemd-devel openssl-devel
+        dnf -y install autoconf automake libtool clang systemd-devel openssl-devel linux-atm-libs-devel
     - uses: actions/checkout@v3
 
     - name: configure
