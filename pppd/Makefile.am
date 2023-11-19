@@ -20,6 +20,12 @@ utest_pppcrypt_LDFLAGS =
 
 check_PROGRAMS += utest_crypto
 
+utest_utils_SOURCES = utils.c utils_utest.c
+utest_utils_CPPFLAGS = -DUNIT_TEST
+utest_utils_LDFLAGS =
+
+check_PROGRAMS += utest_utils
+
 if WITH_SRP
 sbin_PROGRAMS += srp-entry
 dist_man8_MANS += srp-entry.8
@@ -83,7 +89,7 @@ pppd_SOURCES = \
     upap.c \
     utils.c
 
-pppd_CPPFLAGS = -DSYSCONFDIR=\"${sysconfdir}\" -DLOCALSTATEDIR=\"${localstatedir}\" -DPPPD_RUNTIME_DIR='"@PPPD_RUNTIME_DIR@"' -DPPPD_LOGFILE_DIR='"@PPPD_LOGFILE_DIR@"'
+pppd_CPPFLAGS = -DSYSCONFDIR=\"${sysconfdir}\" -DPPPD_RUNTIME_DIR='"@PPPD_RUNTIME_DIR@"' -DPPPD_LOGFILE_DIR='"@PPPD_LOGFILE_DIR@"'
 pppd_LDFLAGS =
 pppd_LIBS =
 

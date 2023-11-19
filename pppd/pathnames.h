@@ -17,7 +17,7 @@
  * 3. Redistributions of any form whatsoever must retain the following
  *    acknowledgment:
  *    "This product includes software developed by Paul Mackerras
- *     <paulus@samba.org>".
+ *     <paulus@ozlabs.org>".
  *
  * THE AUTHORS OF THIS SOFTWARE DISCLAIM ALL WARRANTIES WITH REGARD TO
  * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -107,6 +107,10 @@
 #define PPP_PATH_PEERFILES      PPP_PATH_CONFDIR "/peers/"
 #define PPP_PATH_RESOLV         PPP_PATH_CONFDIR "/resolv.conf"
 
+#define PPP_PATH_NET_INIT	PPP_PATH_CONFDIR "/net-init"
+#define PPP_PATH_NET_PREUP	PPP_PATH_CONFDIR "/net-pre-up"
+#define PPP_PATH_NET_DOWN	PPP_PATH_CONFDIR "/net-down"
+
 #define PPP_PATH_CONNERRS       PPP_PATH_VARLOG  "/connect-errors"
 
 #define PPP_PATH_USEROPT        ".ppprc"
@@ -120,12 +124,12 @@
 #define PPP_PATH_PPPDB          PPP_PATH_VARRUN  "/pppd2.tdb"
 
 #ifdef __linux__
-#define PPP_PATH_LOCKDIR        PPP_PATH_VARRUN  "/lock"
+#define PPP_PATH_LOCKDIR        "/var/lock"
 #else
 #ifdef SVR4
-#define PPP_PATH_LOCKDIR        LOCALSTATEDIR "/spool/locks"
+#define PPP_PATH_LOCKDIR        "/var/spool/locks"
 #else
-#define PPP_PATH_LOCKDIR        LOCALSTATEDIR "/spool/lock"
+#define PPP_PATH_LOCKDIR        "/var/spool/lock"
 #endif
 #endif
 
