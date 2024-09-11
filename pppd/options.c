@@ -121,8 +121,12 @@ char	linkname[MAXPATHLEN];	/* logical name for link */
 bool	tune_kernel;		/* may alter kernel settings */
 int	connect_delay = 1000;	/* wait this many ms after connect script */
 int	req_unit = -1;		/* requested interface unit */
+char	path_net_init[MAXPATHLEN]; /* pathname of net-init script */
+char	path_net_preup[MAXPATHLEN];/* pathname of net-pre-up script */
+char	path_net_down[MAXPATHLEN]; /* pathname of net-down script */
 char	path_ipup[MAXPATHLEN];	/* pathname of ip-up script */
 char	path_ipdown[MAXPATHLEN];/* pathname of ip-down script */
+char	path_ippreup[MAXPATHLEN]; /* pathname of ip-pre-up script */
 char	req_ifname[IFNAMSIZ];	/* requested interface name */
 bool	multilink = 0;		/* Enable multilink operation */
 char	*bundle_name = NULL;	/* bundle name for multilink */
@@ -331,11 +335,24 @@ struct option general_options[] = {
       "Metric to use for the default route (Linux only; -1 for default behavior)",
       OPT_PRIV|OPT_LLIMIT|OPT_INITONLY, NULL, 0, -1 },
 
+    { "net-init-script", o_string, path_net_init,
+      "Set pathname of net-init script",
+      OPT_PRIV|OPT_STATIC, NULL, MAXPATHLEN },
+    { "net-pre-up-script", o_string, path_net_preup,
+      "Set pathname of net-preup script",
+      OPT_PRIV|OPT_STATIC, NULL, MAXPATHLEN },
+    { "net-down-script", o_string, path_net_down,
+      "Set pathname of net-down script",
+      OPT_PRIV|OPT_STATIC, NULL, MAXPATHLEN },
+
     { "ip-up-script", o_string, path_ipup,
       "Set pathname of ip-up script",
       OPT_PRIV|OPT_STATIC, NULL, MAXPATHLEN },
     { "ip-down-script", o_string, path_ipdown,
       "Set pathname of ip-down script",
+      OPT_PRIV|OPT_STATIC, NULL, MAXPATHLEN },
+    { "ip-pre-up-script", o_string, path_ippreup,
+      "Set pathname of ip-pre-up script",
       OPT_PRIV|OPT_STATIC, NULL, MAXPATHLEN },
 
 #ifdef PPP_WITH_IPV6CP

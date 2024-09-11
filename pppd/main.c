@@ -363,10 +363,16 @@ main(int argc, char *argv[])
     struct protent *protp;
     char numbuf[16];
 
-    PPP_crypto_init();
+    strlcpy(path_upapfile, PPP_PATH_UPAPFILE, MAXPATHLEN);
+    strlcpy(path_chapfile, PPP_PATH_CHAPFILE, MAXPATHLEN);
+
+    strlcpy(path_net_init, PPP_PATH_NET_INIT, MAXPATHLEN);
+    strlcpy(path_net_preup, PPP_PATH_NET_PREUP, MAXPATHLEN);
+    strlcpy(path_net_down, PPP_PATH_NET_DOWN, MAXPATHLEN);
 
     strlcpy(path_ipup, PPP_PATH_IPUP, MAXPATHLEN);
     strlcpy(path_ipdown, PPP_PATH_IPDOWN, MAXPATHLEN);
+    strlcpy(path_ippreup, PPP_PATH_IPPREUP, MAXPATHLEN);
 
 #ifdef PPP_WITH_IPV6CP
     strlcpy(path_ipv6up, PPP_PATH_IPV6UP, MAXPATHLEN);
@@ -380,6 +386,11 @@ main(int argc, char *argv[])
 
     /* Initialize syslog facilities */
     reopen_log();
+
+    /* Initialize crypto libraries */
+    if (!PPP_crypto_init()) {
+        exit(1);
+    }
 
     if (gethostname(hostname, sizeof(hostname)) < 0 ) {
 	ppp_option_error("Couldn't get hostname: %m");
@@ -841,7 +852,7 @@ set_ifunit(int iskey)
 	create_pidfile(getpid());	/* write pid to file */
 	create_linkpidfile(getpid());
     }
-    run_net_script(PPP_PATH_NET_INIT, 1);
+    run_net_script(path_net_init, 1);
 }
 
 /*
@@ -1249,7 +1260,7 @@ new_phase(ppp_phase_t p)
 	if (phase <= PHASE_NETWORK) {
 	    char iftmpname[IFNAMSIZ];
 	    int ifindex = if_nametoindex(ifname);
-	    run_net_script(PPP_PATH_NET_PREUP, 1);
+	    run_net_script(path_net_preup, 1);
 	    if (if_indextoname(ifindex, iftmpname) && strcmp(iftmpname, ifname)) {
 		info("Detected interface name change from %s to %s.", ifname, iftmpname);
 		strcpy(ifname, iftmpname);
@@ -1257,7 +1268,7 @@ new_phase(ppp_phase_t p)
 	}
 	break;
     case PHASE_DISCONNECT:
-	run_net_script(PPP_PATH_NET_DOWN, 0);
+	run_net_script(path_net_down, 0);
 	break;
     }
 
@@ -1331,9 +1342,9 @@ print_link_stats(void)
 void
 reset_link_stats(int u)
 {
-    if (!get_ppp_stats(u, &old_link_stats))
-	return;
+    get_ppp_stats(u, &old_link_stats);
     ppp_get_time(&start_time);
+    link_stats_print = 1;
 }
 
 /*

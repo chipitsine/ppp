@@ -177,6 +177,8 @@ extern bool	uselogin;	/* Use /etc/passwd for checking PAP */
 extern bool	session_mgmt;	/* Do session management (login records) */
 extern char	our_name[MAXNAMELEN];/* Our name for authentication purposes */
 extern char	remote_name[MAXNAMELEN]; /* Peer's name for authentication */
+extern char	path_upapfile[];/* Pathname of pap-secrets file */
+extern char	path_chapfile[];/* Pathname of chap-secrets file */
 extern bool	explicit_remote;/* remote_name specified with remotename opt */
 extern bool	demand;		/* Do dial-on-demand */
 extern char	*ipparam;	/* Extra parameter for ip up/down scripts */
@@ -192,8 +194,12 @@ extern bool	tune_kernel;	/* May alter kernel settings as necessary */
 extern int	connect_delay;	/* Time to delay after connect script */
 extern int	max_data_rate;	/* max bytes/sec through charshunt */
 extern int	req_unit;	/* interface unit number to use */
+extern char	path_net_init[]; /* pathname of net-init script */
+extern char	path_net_preup[];/* pathname of net-pre-up script */
+extern char	path_net_down[]; /* pathname of net-down script */
 extern char	path_ipup[]; 	/* pathname of ip-up script */
 extern char	path_ipdown[];	/* pathname of ip-down script */
+extern char	path_ippreup[];	/* pathname of ip-pre-up script */
 extern char	req_ifname[]; /* interface name to use (IFNAMSIZ) */
 extern bool	multilink;	/* enable multilink operation (options.c) */
 extern bool	noendpoint;	/* don't send or accept endpt. discrim. */

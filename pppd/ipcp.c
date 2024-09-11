@@ -88,6 +88,7 @@ static int default_route_set[NUM_PPP];	/* Have set up a default route */
 static int proxy_arp_set[NUM_PPP];	/* Have created proxy arp entry */
 static bool usepeerdns;			/* Ask peer for DNS addrs */
 static bool usepeerwins;		/* Ask peer for WINS addrs */
+static bool noresolvconf;		/* Do not create resolv.conf */
 static int ipcp_is_up;			/* have called np_up() */
 static int ipcp_is_open;		/* haven't called np_finished() */
 static bool ask_for_local;		/* request our address from peer */
@@ -218,6 +219,9 @@ static struct option ipcp_option_list[] = {
 
     { "usepeerwins", o_bool, &usepeerwins,
       "Ask peer for WINS address(es)", 1 },
+
+    { "noresolvconf", o_bool, &noresolvconf,
+      "Do not create resolv.conf", 1 },
 
     { "netmask", o_special, (void *)setnetmask,
       "set netmask", OPT_PRIO | OPT_A2STRVAL | OPT_STATIC, netmask_str },
@@ -1437,14 +1441,14 @@ ipcp_reqci(fsm *f, u_char *inp,	int *len, int reject_if_disagree)
     ipcp_options *ho = &ipcp_hisoptions[f->unit];
     ipcp_options *ao = &ipcp_allowoptions[f->unit];
     u_char *cip, *next;		/* Pointer to current and next CIs */
-    u_short cilen, citype;	/* Parsed len, type */
+    u_int32_t cilen, citype;	/* Parsed len, type */
     u_short cishort;		/* Parsed short value */
     u_int32_t tl, ciaddr1, ciaddr2;/* Parsed address values */
     int rc = CONFACK;		/* Final packet return code */
     int orc;			/* Individual option return code */
     u_char *p;			/* Pointer to next char to parse */
     u_char *ucp = inp;		/* Pointer to current output char */
-    int l = *len;		/* Length left */
+    u_int32_t l = *len;		/* Length left */
     u_char maxslotindex, cflag;
     int d;
 
@@ -1766,7 +1770,7 @@ ip_demand_conf(int u)
     }
     if (!sifaddr(u, wo->ouraddr, wo->hisaddr, GetMask(wo->ouraddr)))
 	return 0;
-    ipcp_script(PPP_PATH_IPPREUP, 1);
+    ipcp_script(path_ippreup, 1);
     if (!sifup(u))
 	return 0;
     if (!sifnpmode(u, PPP_IP, NPMODE_QUEUE))
@@ -1932,7 +1936,7 @@ ipcp_up(fsm *f)
 	ifindex = if_nametoindex(ifname);
 
 	/* run the pre-up script, if any, and wait for it to finish */
-	ipcp_script(PPP_PATH_IPPREUP, 1);
+	ipcp_script(path_ippreup, 1);
 
 	/* check if preup script renamed the interface */
 	if (!if_indextoname(ifindex, ifname)) {
@@ -2026,7 +2030,7 @@ ipcp_down(fsm *f)
     sifvjcomp(f->unit, 0, 0, 0);
 
     print_link_stats(); /* _after_ running the notifiers and ip_down_hook(),
-			 * because print_link_stats() sets link_stats_valid
+			 * because print_link_stats() sets link_stats_print
 			 * to 0 (zero) */
 
     /*
@@ -2151,6 +2155,9 @@ static void
 create_resolv(u_int32_t peerdns1, u_int32_t peerdns2)
 {
     FILE *f;
+
+    if (noresolvconf)
+	return;
 
     f = fopen(PPP_PATH_RESOLV, "w");
     if (f == NULL) {
