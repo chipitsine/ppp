@@ -24,10 +24,9 @@ the link and sets up the ppp network interface.  Pppd includes support
 for authentication, so you can control which other systems may make a
 PPP connection and what IP addresses they may use.
 
-The platforms supported by this package are Linux and Solaris.  I have
-code for NeXTStep, FreeBSD, SunOS 4.x, SVR4, Tru64 (Digital Unix), AIX
-and Ultrix but no active maintainers for these platforms.  Code for
-all of these except AIX is included in the ppp-2.3.11 release.
+The platforms supported by this package are Linux and Solaris.
+(There is also code to support various old flavours of Unix in the git
+repository, but it is quite old and unmaintained.)
 
 The kernel code for Linux is no longer distributed with this package,
 since the relevant kernel code is in the official Linux kernel source
@@ -35,6 +34,12 @@ since the relevant kernel code is in the official Linux kernel source
 Linux distributions.  The Linux kernel code supports using PPP over
 things other than serial ports, such as PPP over Ethernet and PPP over
 ATM.
+
+Similarly, the kernel code for Solaris is no longer distributed with
+this package.  See the Illumos web site for pointers to the kernel
+module source code and build environment.
+
+  https://www.illumos.org/
 
 
 Installation.
@@ -65,6 +70,11 @@ authenticating itself to you, of course.)
 What's new in ppp-2.5.1
 ***********************
 
+* The files copied to /etc/ppp (or <sysconfdir>/ppp) now have
+  ".example" appended to their filenames, so as to indicate that they
+  are just examples, and to avoid overwriting existing configuration
+  files.
+
 * Pppd can now measure and log the round-trip time (RTT) of LCP
   echo-requests and record them in a binary file structured as a
   circular buffer.  Other programs or scripts can examine the file and
@@ -76,8 +86,23 @@ What's new in ppp-2.5.1
   additional, more deterministic ways for pppd to interact with the
   rest of the networking configuration.
 
+* New options have been added to allow the system administrator to
+  set the location of various scripts and secrets files.
+
+* A new "noresolvconf" option tells pppd not to write the
+  /etc/ppp/resolv.conf file; DNS server addresses, if obtained from
+  the peer, are still passed to scripts in the environment.
+
 * Pppd will now create the directory for the TDB connection database
   if it doesn't already exist.
+
+* Kernel module code for Solaris is no longer included.
+
+* Support for decompressing compressed packets has been removed from
+  pppdump, because the zlib code used was old and potentially
+  vulnerable.
+
+* Some old code has been removed.
 
 * Various other bug fixes and minor enhancements.
 
@@ -153,7 +178,7 @@ to linux-ppp@vger.kernel.org, or report them to the maintainer for the
 port for the operating system you are using:
 
 Linux			Paul Mackerras <paulus@ozlabs.org>
-Solaris			James Carlson <carlson@workingcode.com>
+Solaris			James Carlson <carlsonj@workingcode.com>
 
 
 Copyrights:
@@ -162,7 +187,7 @@ Copyrights:
 All of the code can be freely used and redistributed.  The individual
 source files each have their own copyright and permission notice.
 Pppd, pppstats and pppdump are under BSD-style notices.  Some of the
-pppd plugins are GPL'd.  Chat is public domain.
+pppd plugins are GPL'd.  Chat has an MIT licence notice.
 
 
 Distribution:
